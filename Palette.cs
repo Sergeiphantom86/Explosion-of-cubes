@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Palette : MonoBehaviour
 {
-    private List<Color> _colors = new List<Color>();
+    private List<Color> _colors = new();
 
     public void GetTexturs()
     {
