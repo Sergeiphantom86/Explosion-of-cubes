@@ -26,12 +26,12 @@ public class Separat : MonoBehaviour
         int minQuantity = 2;
         int maxQuantity = 6;
         int scale = 2;
-
+        
+        gameObject.AddComponent<Palette>().GetTexturs();
+        
         for (int i = 0; i <= Random(minQuantity, maxQuantity); i++)
         {
             Instantiate(gameObject, transform.position, Quaternion.identity).transform.localScale = transform.lossyScale / scale;
-            
-            gameObject.AddComponent<Palette>().GetTexturs();
         }
     }
 
