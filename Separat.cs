@@ -1,18 +1,27 @@
 using UnityEngine;
+using System.Collections.Generic;
+
+[RequireComponent(typeof(Explosion), typeof(Color))]
 
 public class Separat : MonoBehaviour
 {
-    public static int Random(int min, int max)
+    private List<Rigidbody> _rigidbodysNewCubes = new();
+    private const float _chanceSeparat = 1.0f;
+    private GameObject _newCube;
+
+    void Start()
     {
-        return new System.Random().Next(min, max);
+        gameObject.AddComponent<Color>().Replace();
     }
 
     private void OnMouseDown()
     {
-        if (gameObject.transform.lossyScale.x >= GetAbilityShare() / 100f)
+        if (_chanceSeparat >= Random.value)
         {
-            AddNewItems();
-           
+            AddNewCubs();
+
+            _newCube.AddComponent<Explosion>().UseExplosion(_rigidbodysNewCubes);
+
             Destroy(gameObject);
         }
         else
@@ -21,22 +30,32 @@ public class Separat : MonoBehaviour
         }
     }
 
-    private void AddNewItems()
+    public void AddNewCubs()
     {
         int minQuantity = 2;
         int maxQuantity = 6;
-        int scale = 2;
 
-        gameObject.AddComponent<Palette>().GetTexturs();
+        int quantityItems = Random.Range(minQuantity, maxQuantity);
 
-        for (int i = 0; i <= Random(minQuantity, maxQuantity); i++)
+        for (int i = 0; i <= quantityItems; i++)
         {
-            Instantiate(gameObject, transform.position, Quaternion.identity).transform.localScale = transform.lossyScale / scale;
+            _newCube = СreateNewGameObject();
+
+            ReduceSize();
+
+            _rigidbodysNewCubes.Add(_newCube.GetComponent<Rigidbody>());
         }
     }
 
-    private float  GetAbilityShare()
+    private GameObject СreateNewGameObject()
     {
-        return Random(0, 100);
+        return Instantiate(gameObject, transform.position, Quaternion.identity);
+    }
+
+    private void ReduceSize()
+    {
+        int scaleItem = 2;
+
+        _newCube.transform.localScale = transform.lossyScale / scaleItem;
     }
 }
