@@ -1,26 +1,32 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
-[RequireComponent(typeof(Explosion), typeof(Color))]
+[RequireComponent(typeof(Explosion), typeof(Probability), typeof(Color))]
 
 public class Separat : MonoBehaviour
 {
-    private List<Rigidbody> _rigidbodysNewCubes = new();
-    private const float _chanceSeparat = 1.0f;
-    private GameObject _newCube;
+    private List<Rigidbody> _rigidbodysNewItem = new();
 
-    void Start()
+    private int _reductionFactor = 2;
+    private float _chans;
+
+    private void Start()
     {
         gameObject.AddComponent<Color>().Replace();
+
+        _chans = gameObject.AddComponent<Probability>().GetSplitChance();
     }
 
     private void OnMouseDown()
     {
-        if (_chanceSeparat >= Random.value)
+        if (_chans >= Random.value)
         {
-            AddNewCubs();
+            AddNewItem();
 
-            _newCube.AddComponent<Explosion>().UseExplosion(_rigidbodysNewCubes);
+            gameObject.AddComponent<Explosion>().UseExplosion(_rigidbodysNewItem);
+
+            gameObject.AddComponent<Probability>().SetSplitChance(_chans / _reductionFactor);
 
             Destroy(gameObject);
         }
@@ -30,7 +36,7 @@ public class Separat : MonoBehaviour
         }
     }
 
-    public void AddNewCubs()
+    public void AddNewItem()
     {
         int minQuantity = 2;
         int maxQuantity = 6;
@@ -39,23 +45,21 @@ public class Separat : MonoBehaviour
 
         for (int i = 0; i <= quantityItems; i++)
         {
-            _newCube = СreateNewGameObject();
+            ReduceSize(СreateNewGameObject());
 
-            ReduceSize();
-
-            _rigidbodysNewCubes.Add(_newCube.GetComponent<Rigidbody>());
+            _rigidbodysNewItem.Add(gameObject.GetComponent<Rigidbody>());
         }
     }
 
     private GameObject СreateNewGameObject()
     {
-        return Instantiate(gameObject, transform.position, Quaternion.identity);
+        return Instantiate(gameObject, transform.position, Random.rotationUniform);
     }
 
-    private void ReduceSize()
+    private void ReduceSize(GameObject newItem)
     {
         int scaleItem = 2;
 
-        _newCube.transform.localScale = transform.lossyScale / scaleItem;
+        newItem.transform.localScale = transform.lossyScale / scaleItem;
     }
 }
